@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+    <!-- Обязательные метатеги -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+            crossorigin="anonymous"></script>
+    <link rel="icon" href="../static/img/favicon.ico" type="image/x-icon">
+    <title>RESTfull app. Task 3.1.3</title>
+</head>
+<body>
+<div id="container">
+    <!--  Менюшка-->
+
+    <nav class="navbar navbar-light bg-dark mb-2">
+        <div class="container-fluid">
+            <div class="navbar-brand inline text-white">
+                <a class="navbar-brand text-white" href="/">Task 3.1.3</a>
+                <b th:text="${signedUser.getUsername()}">name</b>
+                with roles:
+                <b class="font-weight-normal" th:text="${signedUser.getAuthorities()}">role</b>
+            </div>
+            <div>
+                <a href="/logout" class="text-white-50">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!--  Панель приложения-->
+
+    <div id="applicationPane" class="container-fluid">
+        <div class="row">
+            <div id="navigationPane"
+                 class="flex-column align-items-start col-md-2 bg-light">
+                <div class="nav flex-column nav-pills me-3"
+                     id="v-pills-tab"
+                     role="tablist"
+                     aria-orientation="vertical">
+                    <button class="current-user-profile-btn nav-link active"
+                            id="v-pills-profile-tab"
+                            data-bs-toggle="pill"
+                            data-bs-target="#v-pills-user"
+                            type="button"
+                            role="tab"
+                            aria-controls="v-pills-user"
+                            aria-selected="false">User
+                    </button>
+                </div>
+            </div>
+
+            <!--        Область контента-->
+
+            <div id="contentPane"
+                 class="tab-content col-md-10 bg-light">
+
+                <!--        Панель текущего пользователя-->
+
+                <div id="v-pills-user"
+                     class="tab-pane fade show active"
+                     role="tabpanel"
+                     aria-labelledby="userContentPane">
+                    <div id="userContentPane" class="tab-content">
+                        <div id="userInfoTab">
+                            <h1 class="h2">User information page</h1>
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="userInfo">
+                                    <div class="card">
+                                        <h4 class="card-header">User info</h4>
+                                        <div class="card-body text-center">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <td>ID</td>
+                                                    <td>Firstname</td>
+                                                    <td>Lastname</td>
+                                                    <td>Age</td>
+                                                    <td>email</td>
+                                                    <td>Role</td>
+                                                </tr>
+                                                </thead>
+                                                <tr>
+                                                    <td id="currentUserID">ID</td>
+                                                    <td id="currentUserFirstname">name</td>
+                                                    <td id="currentUserLastname">lastname</td>
+                                                    <td id="currentUserAge">Age</td>
+                                                    <td id="currentUserEmail">email</td>
+                                                    <td id="currentUserRoles">Roles</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (async () => {
+
+        //Адрес контроллера
+        const url = 'http://localhost:8080';
+        const getCurrentUserUrl = '/current-user';
+
+        //Глобальные переменные
+        let currentUser;
+
+        //Элементы формы текущего юзера
+        const currentUserId = document.getElementById('currentUserID');
+        const currentUserFirstname = document.getElementById('currentUserFirstname');
+        const currentUserLastname = document.getElementById('currentUserLastname');
+        const currentUserAge = document.getElementById('currentUserAge');
+        const currentUserEmail = document.getElementById('currentUserEmail');
+        const currentUserRoles = document.getElementById('currentUserRoles');
+
+        //Keширование данных: текущий пользователь
+        const cacheCurrentUser = async () => {
+            const res = await fetch(url + getCurrentUserUrl);
+            currentUser = await res.json();
+        };
+
+        await cacheCurrentUser();
+
+        //Получение ролей юзера
+        const getUserRoles = (user) => {
+            let roles = [];
+            for (let authority of user.authorities) {
+                roles.push(authority.role);
+            }
+            return roles;
+        };
+
+        //Отображение профиля текущего пользователя
+        const showUser = async () => {
+            currentUserId.innerHTML = '<p>' + currentUser.user_id + '</p>';
+            currentUserFirstname.innerHTML = '<p>' + currentUser.firstname + '</p>';
+            currentUserLastname.innerHTML = '<p>' + currentUser.lastname + '</p>';
+            currentUserAge.innerHTML = '<p>' + currentUser.age + '</p>';
+            currentUserEmail.innerHTML = '<p>' + currentUser.email + '</p>';
+            currentUserRoles.innerHTML = '<p>' + getUserRoles(currentUser).join(' ') + '</p>';
+        };
+        await showUser();
+    })();
+</script>
+</body>
+</html>
