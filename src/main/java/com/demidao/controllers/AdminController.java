@@ -15,12 +15,10 @@ import java.util.List;
 public class AdminController {
 
     private final UserService userService;
-    private final RoleService roleService;
 
     @Autowired
     public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
-        this.roleService = roleService;
     }
 
     @GetMapping("/show-users")

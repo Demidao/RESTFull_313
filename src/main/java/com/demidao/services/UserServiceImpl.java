@@ -227,6 +227,5 @@ public class UserServiceImpl implements UserService {
         user.setPassword(pass);
         user.setRoles(roleList);
         return user;
-
     }
 }
